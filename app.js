@@ -27,6 +27,8 @@ let selectedWord = wordPool[Math.floor(Math.random() * wordPool.length)];
 let correctLetters = [];
 let wrongLetters = [];
 
+let isGameOver = false;
+
 function displayWord() {
     // Shows hidden word
     wordElement.innerHTML = `
@@ -41,6 +43,7 @@ function displayWord() {
     if (innerWord === selectedWord)  {
         endGameMessage.innerText = "You've Won! 😃";
         popup.style.display = "flex";
+        isGameOver = true;
     }
 }
 
@@ -74,27 +77,30 @@ function updateWrongLettersElement() {
     if (wrongLetters.length === figureParts.length) {
         endGameMessage.innerText = "You've lost 💀"
         popup.style.display = "flex"
+        isGameOver = true;
     }
 }
 
 // Keydown
 addEventListener("keydown", (e) => {
-    if (e.keyCode >= 65 && e.keyCode <= 90) {
-        const letter = e.key;
-
-        if(selectedWord.includes(letter)) {
-            if(!correctLetters.includes(letter)) {
-                correctLetters.push(letter);
-                displayWord();
-            } else { // Leter already entered
-                showNotification()
-            }
-        } else { // Leter is incorrect
-            if(!wrongLetters.includes(letter)) {
-                wrongLetters.push(letter);
-                updateWrongLettersElement()
-            } else {
-                showNotification()
+    if (!isGameOver) {
+        if (e.keyCode >= 65 && e.keyCode <= 90) {
+            const letter = e.key;
+    
+            if(selectedWord.includes(letter)) {
+                if(!correctLetters.includes(letter)) {
+                    correctLetters.push(letter);
+                    displayWord();
+                } else { // Leter already entered
+                    showNotification()
+                }
+            } else { // Leter is incorrect
+                if(!wrongLetters.includes(letter)) {
+                    wrongLetters.push(letter);
+                    updateWrongLettersElement()
+                } else {
+                    showNotification()
+                }
             }
         }
     }
@@ -108,6 +114,7 @@ playAgainBtn.addEventListener("click", ()=> {
     displayWord();
     updateWrongLettersElement();
     popup.style.display = "none"
+    isGameOver = false;
 });
 
 displayWord();
