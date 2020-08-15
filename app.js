@@ -53,7 +53,28 @@ function showNotification() {
 }
 
 function updateWrongLettersElement() {
-    console.log("Updating Wrong");
+
+    // Display wrong letter entered
+    wrongLettersElement.innerHTML = `
+        ${wrongLetters.length > 0 ? "<p>Wrong</p>" : ""}
+        ${wrongLetters.map(letter => `<span>${letter}</span>`)}
+    `;
+
+    // Display hangman body part 
+    figureParts.forEach((part, index) => {
+        const errors = wrongLetters.length
+        if(index < errors) {
+            part.style.display = "block";
+        } else {
+            part.style.display = "none";
+        }
+    });
+
+    // Check if out of attempts
+    if (wrongLetters.length === figureParts.length) {
+        endGameMessage.innerText = "You've lost 💀"
+        popup.style.display = "flex"
+    }
 }
 
 // Keydown
@@ -71,12 +92,22 @@ addEventListener("keydown", (e) => {
         } else { // Leter is incorrect
             if(!wrongLetters.includes(letter)) {
                 wrongLetters.push(letter);
-                //TODO: updateWrongLettersElement()
+                updateWrongLettersElement()
             } else {
                 showNotification()
             }
         }
     }
+});
+
+playAgainBtn.addEventListener("click", ()=> {
+    correctLetters.splice(0);
+    wrongLetters.splice(0);
+
+    selectedWord = wordPool[Math.floor(Math.random() * wordPool.length)];
+    displayWord();
+    updateWrongLettersElement();
+    popup.style.display = "none"
 });
 
 displayWord();
